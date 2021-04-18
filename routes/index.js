@@ -1,4 +1,4 @@
-var express = require('express');
+/* var express = require('express');
 var tempfile = require('tempfile');
 var officegen = require('officegen');
 var router = express.Router();
@@ -26,3 +26,4 @@ router.post('/docx', function(req, res){
     docx.generate(res);
 });
 module.exports = router;
+*/
