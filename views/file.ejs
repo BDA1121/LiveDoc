@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script src="https://kit.fontawesome.com/ed60465bcd.js" crossorigin="anonymous"></script>
+	<link href='/css/styles.css' rel="stylesheet" type="text/css">
+    
+</head>
+<body onload="enableEditMode();" style="margin: 0;">
+    <div style="background-image: linear-gradient(to right, rgb(24, 0, 160) , rgb(0, 110, 255));" >
+        <a class="home" href="/home"><i class="fa fa-home" aria-hidden="true"></i> </a>    <h1 style="text-align: center;margin: 0px 1px 1px 0px !important;padding: 0px 0px 6px;"><%= room.room%></h1> 
+    <a style="position: absolute;top: 3.8%;font-size: 21px;right: 5%;" href="/logout"><span >Logout <i class="fa fa-sign-out" aria-hidden="true"></i></span></a>
+        
+      </div>
+   
+<div class="wrapper flex1">
+    <div class="box1">
+        <div class="sub-box">
+            <div>
+            <button class="editBut" onclick="execCmd('bold');"><i class="fa fa-bold"></i></button>
+            <button class="editBut" onclick="execCmd('italic');"><i class="fa fa-italic"></i></button>
+            <button class="editBut" onclick="execCmd('underline');"><i class="fa fa-underline"></i></button>
+            <button class="editBut" onclick="execCmd('cut');"><i class="fa fa-cut"></i></button>
+            <button class="editBut" onclick="execCmd('copy');"><i class="fa fa-copy"></i></button>
+            <button class="editBut" onclick="execCmd('undo');"><i class="fa fa-undo"></i></button>
+            <button class="editBut" onclick="execCmd('redo');"><i class="fa fa-repeat"></i></button>
+            <button class="editBut" onclick="execCmd('indent');"><i class="fa fa-indent" aria-hidden="true"></i></button>
+            <button class="editBut" onclick="execCmd('insertOrderedList');"><i class="fa fa-list-ol" aria-hidden="true"></i></button>
+            <button class="editBut" onclick="execCmd('insertUnorderedList');"><i class="fa fa-list" aria-hidden="true"></i></button>
+            <button class="editBut" onclick="execCmd('justifyCenter');"><i class="fa fa-align-center" aria-hidden="true"></i></button>
+            <button class="editBut" onclick="execCmd('justifyLeft');"><i class="fa fa-align-left" aria-hidden="true"></i></button>
+            <button class="editBut" onclick="execCmd('justifyRight');"><i class="fa fa-align-right" aria-hidden="true"></i></button>
+
+            <select class="editSize" onchange="execCommandWithArg('formatBlock',this.value);">
+                <option value="H1">H1</option>
+                <option value="H2">H2</option>
+                <option value="H3">H3</option>
+                <option value="H4">H4</option>
+                <option value="H5">H5</option>
+                <option value="H6">H6</option>
+            </select>
+            <select class="editFont" onchange="execCommandWithArg('fontName',this.value);">
+                <option value="Arial">Arial</option>
+                <option value="Comic Sans MS">Comic Sans MS</option>
+                <option value="Courier">Courier</option>
+                <option value="Georgia">Georgia</option>
+                <option value="Tahoma">Tahoma</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Verdana">Verdana</option>
+            </select>
+            <select class="editBut" onchange="execCommandWithArg('fontSize',this.value);">
+                
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+            </select>
+            <br>
+            <input class="editColor" type="color" onchange="execCommandWithArg('foreColor',this.value);">
+            <button class="editBut" class="show" style="width:60px;" onclick="save();">Save</button>
+        </div>
+        </div>
+        <div class="sub-box1">
+            <h3>
+                Go to doc
+            </h3>
+            <div class="withAcc1">
+                <% rooms.forEach(function(room){ %>
+                    <a href="/home/<%= room.room%>"><div style="float: left;padding-left: 10px;"><%= room.room %> (Owner: 
+                        <% if(room.owner!==user){%>
+                        <%= room.owner%>)
+                        <%}else{%>
+                            You)
+                            <%}%>
+                    </div>
+                </a>
+                <!-- <hr style="height: 1px;"> -->
+                <br>
+                <br>
+                <%})%>
+            </div>
+        </div>
+    </div>
+	
+<iframe name="richTextField" id="TextEditor" style="width:900px; height: 662px;background-color: white;"></iframe>
+<div class="box1">
+    <div class="sub-box">
+        <h3>
+            Users:
+        </h3>
+        <div class="withAcc">
+            <% room.username.forEach(function(user){ %>
+                <div><%= user %></div>
+            <%})%>
+        </div>
+        
+    </div>
+    
+    <div class="sub-box1">
+        <h1>
+            Give access to :
+        </h1>
+            <form >
+                <div  class="wrap">
+                    <% users.forEach(function(user){ %>
+                        <div class="toBeCalled">
+                            <input type="checkbox" class="check" style="margin: none;" name="peoples[]" value="<%= user.username %>">
+                            <div><%= user.username %></div>
+                             
+                        </div>
+                        <hr style="height: 1px;">
+                    <%})%>
+                </div>
+        </form>
+        
+        <button onclick="Onsubmit()" class="form-control">Submit</button>
+        
+    </div>
+</div>
+
+<input value="<%=room.room%>" id="room" style="display:none">
+<input value="<%=room.Content%>" id="Content" style="display:none">
+
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script type="text/javascript">
+
+	var showingSourceCode= false;
+	var isInEditMode= true;
+    var socket=io();
+
+    socket.emit('joinRoom',{room:document.getElementById('room').value});
+    richTextField.document.getElementsByTagName('body')[0].innerHTML =document.getElementById('Content').value
+    socket.on("render", data => {
+        // console.log(data+richTextField.document.getElementsByTagName('body')[0].innerHTML)
+    });
+    socket.on('moved',data=>{
+        // console.log(data)
+        richTextField.document.getElementsByTagName('body')[0].innerHTML = data;
+    })
+
+
+	richTextField.document.addEventListener('keyup', function(e){
+			socket.emit('move',{data:richTextField.document.getElementsByTagName('body')[0].innerHTML});
+			// document.querySelectorAll(".save")[0].innerHTML=richTextField.document.getElementsByTagName('body')[0].innerHTML;
+		});
+	function enableEditMode(){
+		richTextField.document.designMode='On';
+	}
+	function execCmd(command){
+		richTextField.document.execCommand(command, false, null);
+	}
+	function execCommandWithArg(command,arg){
+		richTextField.document.execCommand(command, false, arg);
+	}
+    var adduser = [];
+    var checks = document.getElementsByClassName('check')
+    
+    async function postData(url = '', data = {}) {
+  const response = await fetch(url, {
+    method: 'POST',
+ 
+    headers: {
+      'Content-Type': 'application/json'
+    },
+   
+    body: JSON.stringify(data) 
+  });
+  return response.json(); 
+}
+function save(){
+    postData('/save/'+document.getElementById('room').value, { Content: richTextField.document.getElementsByTagName('body')[0].innerHTML})
+  .then(data => {
+    console.log(data); // JSON data parsed by `data.json()` call
+  });
+}
+	function Onsubmit(event) {
+	console.log("hhh");
+    for(var i =0;i<checks.length;i++){
+        if(checks[i].checked){
+            adduser.push(checks[i].value)
+            console.log(adduser)
+        }
+    }
+    postData('/add/'+document.getElementById('room').value, { users:adduser })
+  .then(data => {
+    console.log(data); // JSON data parsed by `data.json()` call
+  });
+}
+</script>
+<script
+  src="https://code.jquery.com/jquery-3.4.1.js"
+  integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+  crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

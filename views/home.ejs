@@ -1,0 +1,117 @@
+<html>
+	<head>
+		<title>kungfupanda</title>
+	<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+	<link rel="shortcut icon" href="images/pandaa.png">
+    <script src="https://kit.fontawesome.com/ed60465bcd.js" crossorigin="anonymous"></script>
+	<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400' rel="stylesheet" type="text/css">
+	<link href='/css/styles.css' rel="stylesheet" type="text/css">   <script
+  src="https://code.jquery.com/jquery-3.4.1.min.js"
+  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+  crossorigin="anonymous"></script>
+	</head>
+	<body>
+		<div>
+            <div style="background-image: linear-gradient(to right, rgb(24, 0, 160) , rgb(0, 110, 255));" >
+              <h1 class="welcome2" style="padding: 0;">Documents</h1>
+              
+    <a style="position: absolute;top: 3.8%;font-size: 21px;right: 5%;" href="/logout"><span >Logout <i class="fa fa-sign-out" aria-hidden="true"></i></span></a>
+              
+            </div>
+            <h2>New Doc</h2>
+            <div class="flexdocs">
+                <div onclick="showform()" class="card" style="width: 10rem;">
+                    <div class="card-body">
+                      <div class="createBut">Create</div>
+                      
+                    </div>
+                  </div>
+            </div>
+            <hr>
+            <h2>My Docs</h2>
+            <div class="flexdocs">
+              <% docs.forEach(function(doc){ if(user===doc.owner) { %>
+                <a href="/home/<%= doc.room %>" >
+                <div class="card" style="width: 10rem;">
+                    <div class="card-body">
+                      <h5 class="card-title"><%= doc.room %></h5>
+                      <%if(doc.username.indexOf(user) !== -1 ){%>
+                      
+                      <%} else{%>
+                        Get Access
+                      <%}%>
+                    </div>
+                  </div>
+                  </a>
+                  <%}})%>
+            </div>
+            <hr>
+            <h2>Shared Docs</h2>
+            <div class="flexdocs">
+              <% docs.forEach(function(doc){ if(user!==doc.owner&&doc.username.indexOf(user)!== -1) { %>
+                <a href="/home/<%= doc.room %>" >
+                    <div class="card" style="width: 10rem;">
+                    <div class="card-body">
+                      <h5 class="card-title"><%= doc.room %></h5>
+                      <%if(doc.username.indexOf(user) !== -1 ){%>
+                      Owner: <%= doc.owner%>
+                      <%} else{%>
+                        Get Access
+                      <%}%>
+                    </div>
+                  </div>
+                  </a>
+                  <%}})%>
+            </div>
+            <hr>
+            <h2>Other Docs</h2>
+            <div class="flexdocs">
+              <% docs.forEach(function(doc){ if(doc.username.indexOf(user)=== -1) { %>
+                <div class="card" style="width: 10rem;">
+                    <div class="card-body">
+                      <h6 class="card-title"><%= doc.room %></h6>
+                      <%if(doc.username.indexOf(user) !== -1 ){%>
+                      <a href="/home/<%= doc.room %>" class="btn btn-primary">Go in</a>
+                      <%} else{%>
+                        Get Access
+                      <%}%>
+                    </div>
+                  </div>
+                  <%}})%>
+            </div>
+          </div>
+          <div class="popup-parent" id="popup-parent">
+              <div class="popup-child">
+                <i onclick="closeform()" class="fa fa-times" aria-hidden="true"></i>
+                <form action="/create" method="POSt">
+                    <input type="text" name="room" placeholder="Enter File Name">
+                    <input type="submit" value="Create File">
+                </form>
+              </div>
+              
+          </div>
+<!-- <img src="/images/upFile-1597754941520.jpg">
+<div class=" bottom ">
+	
+	© 2020 CONNECT. NO RIGHTS RESERVED<br>
+	CREATED BY <img src="/images/pandanav.jpg" width="20px"> BDA
+</div> -->
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script >
+    var create = document.getElementById('popup-parent');
+    create.style.display = "none";
+    function showform(){
+        create.style.display = "";
+    }
+    function closeform(){
+        create.style.display = "none";
+    }
+
+</script>
+<script
+  src="https://code.jquery.com/jquery-3.4.1.js"
+  integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+  crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
