@@ -139,7 +139,7 @@ app.post('/create',function(req,res){
 })
 app.post('/add/:room',function(req,res){
     usernames = req.body.users;
-    console.log(usernames+req.params.room);
+    // console.log(usernames+req.params.room);
     Doc.findOne({room:req.params.room},function(err,room){
         for(var i=0;i<usernames.length;i++){
             room.username.push(usernames[i])
@@ -161,21 +161,7 @@ app.post('/add/:room',function(req,res){
 //-------------when the person doesnt attend the call--------------------------------------------------------------------------------------------------
 
 //-------------logout--------------------------------------------------------------------------------------------------------------------
-app.post('/logout', function (req, res) {
-	var x = req.user.username;
-	User.find({ username: req.user.username }, function (err, user) {
-		if (err) {
-			console.log('shit sorry');
-		}
-		user.forEach(function (usr) {
-			console.log(usr.username);
-			usr.status = 'offline';
-			console.log(usr.status);
-			usr.save();
-		});
-	});
-	res.redirect('/logout');
-});
+
 app.get('/logout', function (req, res) {
 	req.logout();
 	res.redirect('/');
@@ -184,15 +170,7 @@ app.get('/logout', function (req, res) {
 //-------------------middleware to check if perosn is logged in---------------------------------------------------------------------------------------
 function islogin(req, res, next) {
 	if (req.isAuthenticated()) {
-		User.find({ username: req.user.username }, function (err, user) {
-			if (err) {
-				console.log('shit sorry');
-			}
-			user.forEach(function (usr) {
-				usr.status = 'online';
-				usr.save();
-			});
-		});
+		
 		return next();
 	} else {
 		res.redirect('/');
@@ -206,7 +184,7 @@ app.get('/logout', function (req, res) {
 
 io.on("connection", (socket) => {
     var rooms;
-    console.log("New client connected");
+    // console.log("New client connected");
     socket.on('joinRoom',({room})=>{
         socket.join(room);
         rooms =room
@@ -215,18 +193,13 @@ io.on("connection", (socket) => {
     })
     socket.on('move',({data})=>{
         socket.broadcast.to(rooms).emit('moved',data)
-        console.log(data)
+        // console.log(data)
     })
     
 
 });
 
-//----------------------use of initial signaling to set up webrtc-------------------------------------------------------------------------------------
-//----------------------------------ready is emmitted---------------------------------------------------------
 
-//-----------------------------send is emitted--------------------------------------------------------------
-
-//------------------------------------------------------------------------------------------------------------------------------------------------
 server.listen(3000, function () {
 	console.log('Server Started XD');
 });
